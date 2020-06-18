@@ -15,15 +15,19 @@ function Tween(InteractionObject, Result)
 end
 
 function SetCFrame(InteractionObject, Result)
+    for i,v in pairs(InteractionObject:GetChildren()) do
+        print(v.Name)
+    end
     InteractionObject.Hinge.CFrame = InteractionObject.Hinge.CFrame * CFrame.Angles(0, math.rad(Result == "Open" and 90 or -90), 0)
 end
 
 function Door:HandleTween(...)
     local args = {...}
+    print(args[3])
     if args[3] then
         Tween(...)
     else
-        SetCFrame()
+        SetCFrame(...)
     end
 end
 

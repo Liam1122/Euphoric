@@ -20,10 +20,11 @@ end
 
 function Window:HandleTween(...)
     local args = {...}
+    print(args[3])
     if args[3] then
         Tween(...)
     else
-        SetCFrame()
+        SetCFrame(...)
     end
 end
 

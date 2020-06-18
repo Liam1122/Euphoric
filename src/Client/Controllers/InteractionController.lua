@@ -76,9 +76,9 @@ function InteractionController:Start()
         print(IsNearby)
         local Info = self.ItemInfo[InteractionObject.Name]
         if Info.ItemType == "Door" then
-            Door:HandleTween(InteractionObject, OpenClose)
+            Door:HandleTween(InteractionObject, OpenClose, IsNearby)
         elseif Info.ItemType == "Window" then
-            Window:HandleTween(InteractionObject, OpenClose)
+            Window:HandleTween(InteractionObject, OpenClose, IsNearby)
         end 
    end)
 end
