@@ -27,8 +27,16 @@ return {
             "F"
         }
     },
-    ["Window"] = {
+    ["Glass Door"] = {
         Id = 2,
+        ItemType = "Door",
+        Interactions = {
+            "E",
+            "F"
+        }
+    },
+    ["Window"] = {
+        Id = 3,
         ItemType = "Window",
         Interactions = {
             "E",

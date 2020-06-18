@@ -21,8 +21,25 @@ function InteractionService.Client:Interact(Player, InteractionObject)
     local Info = InteractionObject.Info
     if Info.Debounce.Value then return end
     local ItemType = ItemInfo[InteractionObject.Name].ItemType
+    if Info.Locked.Value then
+        print("Door is locked")
+        return nil
+    end
     return InteractionModules[ItemType]:InteractWith(Player, InteractionObject)
-    --return OpenClose
+end
+
+function InteractionService.Client:LockUnlock(Player, InteractionObject)
+    local Info = InteractionObject.Info
+
+    if InteractionObject == nil then return end
+    print(Player.Name .. ", wants to lock or unlock" .. InteractionObject.Name)
+
+    --Check if owner first...
+    if Info.Owner.Value ~= Player then
+        print("You don't have permission to do this")
+        return
+    end
+    Info.Locked.Value = not Info.Locked.Value
 end
 
 function InteractionService:Start()
