@@ -6,6 +6,7 @@
 
 local InteractionService = {Client = {}}
 
+local Door;
 
 function InteractionService.Client:Interact(Player, InteractionObject)
     print("Interact has been called from the client!")
