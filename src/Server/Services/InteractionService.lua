@@ -21,15 +21,8 @@ function InteractionService.Client:Interact(Player, InteractionObject)
     local Info = InteractionObject.Info
     if Info.Debounce.Value then return end
     local ItemType = ItemInfo[InteractionObject.Name].ItemType
-    InteractionModules[ItemType]:InteractWith(Player, InteractionObject)
-    Info.Debounce.Value = true
-    Info.Open.Value = not Info.Open.Value
-    delay(1.1, function()
-        Info.Debounce.Value = false
-    end)
-    local OpenClose = Info.Open.Value and "Open" or "Close" 
-    InteractionService:FireOtherClients("InteractionReplication", Player,  InteractionObject, OpenClose)
-    return OpenClose
+    return InteractionModules[ItemType]:InteractWith(Player, InteractionObject)
+    --return OpenClose
 end
 
 function InteractionService:Start()
