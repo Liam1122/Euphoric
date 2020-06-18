@@ -12,7 +12,7 @@ local DataStore2;
 
 function PlayerService:Start()
 
-    DataStore2.Combine("aaaa", "MainData")
+    DataStore2.Combine("TestKey", "MainData")
 
     Players.PlayerAdded:Connect(function(Player)
         local MainPlayerData = DataStore2("MainData", Player)
