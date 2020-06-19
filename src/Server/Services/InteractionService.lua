@@ -6,11 +6,9 @@
 
 local InteractionService = {Client = {}}
 
-local Door;
-
 local InteractionModules = {
-    Door;
-    Window;
+    Door = nil;
+    Window = nil;
 }
 
 local ItemInfo;
@@ -22,7 +20,7 @@ function InteractionService.Client:Interact(Player, InteractionObject)
     if Info.Debounce.Value then return end
     local ItemType = ItemInfo[InteractionObject.Name].ItemType
     if Info.Locked.Value then
-        print("Door is locked")
+        print("Interactable is locked")
         return nil
     end
     return InteractionModules[ItemType]:InteractWith(Player, InteractionObject)
