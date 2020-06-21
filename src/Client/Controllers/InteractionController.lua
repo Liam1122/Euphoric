@@ -34,6 +34,10 @@ function Disable()
 end
 
 function InteractionController:Start()
+    wait(5)
+    self.Modules.PlacementModule:StartPlacing("Chair")
+    wait(10)
+    --self.Modules.PlacementModule:StopPlacing()
     RunService.Heartbeat:Connect(function()
         if Mouse.Target == nil then InteractUI.Adornee = nil Disable() return end
         local PossibleInteraction = Mouse.Target.Name == "Interact" and Mouse.Target.Parent:FindFirstChild("Info") and Mouse.Target
