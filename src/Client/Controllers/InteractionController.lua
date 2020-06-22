@@ -33,12 +33,13 @@ function Disable()
 	end
 end
 
+function InteractionController:ForceQuit()
+    InteractUI.Adornee = nil
+end
+
 function InteractionController:Start()
-    wait(5)
-    self.Modules.PlacementModule:StartPlacing("Sofa")
-    wait(10)
-    --self.Modules.PlacementModule:StopPlacing()
     RunService.Heartbeat:Connect(function()
+        if self.Modules.PlacementModule:IsActive() then return end
         if Mouse.Target == nil then InteractUI.Adornee = nil Disable() return end
         local PossibleInteraction = Mouse.Target.Name == "Interact" and Mouse.Target.Parent:FindFirstChild("Info") and Mouse.Target
 		if not PossibleInteraction then InteractUI.Adornee = nil Disable() return end
@@ -58,6 +59,7 @@ function InteractionController:Start()
 
     local Keyboard = self.Input:Get("Keyboard")
     Keyboard.KeyDown:Connect(function(KeyCode)
+        if self.Modules.PlacementModule:IsActive() then return end
         if InteractUI.Adornee == nil then return end
         local InteractionObject = InteractUI.Adornee.Parent
         if KeyCode == Enum.KeyCode.E then
@@ -85,6 +87,13 @@ function InteractionController:Start()
             Window:HandleTween(InteractionObject, OpenClose, IsNearby)
         end 
    end)
+
+    wait(5)
+    self.Modules.PlacementModule:StartPlacing("Door")
+    wait(10)
+    self.Modules.PlacementModule:StopPlacing()
+    wait(20)
+    self.Modules.PlacementModule:ActivateDeleteMode()
 end
 
 
