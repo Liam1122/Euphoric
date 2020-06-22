@@ -13,7 +13,6 @@ local Mouse = Player:GetMouse()
 local Camera = workspace.CurrentCamera
 
 local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -30,23 +29,31 @@ function GetItemFromName(Name)
             Part.Color = Color3.fromRGB(98,255,98)
         end
     end
-    PlacementModule.Maid:GiveTask(Item)
+    PlacementModule.PlacementMaid:GiveTask(Item)
     return Item
 end
 
+function PlacementModule:IsActive()
+    if self.Placing or self.Deleting then
+        return true
+    end
+    return false
+end
 
 function PlacementModule:StartPlacing(PlacementItemName)
+    self.Controllers.InteractionController:ForceQuit()
     self.SelectedPlacement = GetItemFromName(PlacementItemName)
     self.Placing = true
     self.Deleting = false
     self.CurrentRot = 0
-    self.Maid:GiveTask(RunService.RenderStepped:Connect(function()
+    self.PlacementMaid:GiveTask(RunService.RenderStepped:Connect(function()
         if Mouse.Target == nil then return end
         local ScreenPointRay = Camera:ScreenPointToRay(Mouse.X, Mouse.Y)
         local ray = Ray.new(ScreenPointRay.Origin, ScreenPointRay.Direction * 100)
         local HitPart, Position, Normal = workspace:FindPartOnRayWithWhitelist(ray, {workspace.Properties})
         if HitPart == nil then return end
         if HitPart:IsDescendantOf(workspace.Properties) then
+            --self.SelectedPlacement:SetPrimaryPartCFrame(CFrame.new(Position, Position+Normal*15) * CFrame.Angles(math.rad(-90), math.rad(self.CurrentRot), 0))
             self.SelectedPlacement:SetPrimaryPartCFrame(CFrame.new(Position, Position+Normal*15) * CFrame.Angles(math.rad(-90), math.rad(self.CurrentRot), 0))
             self.CurrentPlacementCFrame = self.SelectedPlacement:GetPrimaryPartCFrame()
         else
@@ -55,8 +62,8 @@ function PlacementModule:StartPlacing(PlacementItemName)
         end
     end))
 
-    local Keyboard = self.Input:Get("Keyboard")
-    self.Maid:GiveTask(Keyboard.KeyDown:Connect(function(Key)
+    
+    self.PlacementMaid:GiveTask(self.Keyboard.KeyDown:Connect(function(Key)
         print("Rotation is being changed...")
         if Key == Enum.KeyCode.E then
             self.CurrentRot = self.CurrentRot + 5
@@ -65,8 +72,7 @@ function PlacementModule:StartPlacing(PlacementItemName)
         end
     end))
 
-   local InputMouse = self.Input:Get("Mouse")
-   self.Maid:GiveTask(InputMouse.LeftDown:Connect(function()
+   self.PlacementMaid:GiveTask(self.Mouse.LeftDown:Connect(function()
         if self.CurrentPlacementCFrame == nil then return end
         if Debounce then return end
         Debounce = true
@@ -75,7 +81,7 @@ function PlacementModule:StartPlacing(PlacementItemName)
         wait(0.4)
         Debounce = false
    end))
-   --[[self.MaidGiveTask(InputMouse.Scrolled:Connect(function(amt)
+   --[[self.PlacementMaidGiveTask(InputMouse.Scrolled:Connect(function(amt)
         if not Keyboard:IsDown(Enum.KeyCode.LeftShift) then return end
         if amt == -1 then
             self.CurrentRot = self.CurrentRot - 10
@@ -85,11 +91,50 @@ function PlacementModule:StartPlacing(PlacementItemName)
     end))]]
 end
 
-function PlacementModule:StopPlacing()
-    self.Maid:DoCleaning()
+function CreateSelectionBox()
+    local SelectionBox = Instance.new("SelectionBox")
+    SelectionBox.LineThickness = -1
+    SelectionBox.SurfaceTransparency = 0
+    SelectionBox.SurfaceColor3 = Color3.fromRGB(255,98,98)
+    SelectionBox.Transparency = 0
+    SelectionBox.Parent = script
+    SelectionBox.Parent = workspace.Placing
+    return SelectionBox
 end
 
+function PlacementModule:ActivateDeleteMode()
+    self.Controllers.InteractionController:ForceQuit()
+    self.Placing = false
+    self.Deleting = true
+    local SelectionBox = CreateSelectionBox()
+    self.DeleteMaid:GiveTask(SelectionBox)
+    self.DeleteMaid:GiveTask(RunService.RenderStepped:Connect(function()
+        if Mouse.Target == nil then SelectionBox.Adornee = nil return end
+        local PossiblePlacementModel = Mouse.Target.Parent:IsA("Model") and Mouse.Target.Parent or Mouse.Target:IsA("Model") and Mouse.Target
+        if PossiblePlacementModel.Name == "Decor" then
+            PossiblePlacementModel = PossiblePlacementModel.Parent
+        else
+            SelectionBox.Adornee = nil
+        end
+        if PossiblePlacementModel.Parent.Name ~= "Placements" then SelectionBox.Adornee = nil return end
+        if Mouse.Target:IsDescendantOf(workspace.Properties) and PossiblePlacementModel then
+            SelectionBox.Adornee = PossiblePlacementModel
+        else
+            SelectionBox.Adornee = nil
+        end
+    end))
 
+    self.DeleteMaid:GiveTask(self.Mouse.LeftDown:Connect(function()
+        if SelectionBox == nil then return end
+        --Client side test
+        SelectionBox.Adornee:Destroy()
+    end))
+end
+
+function PlacementModule:StopPlacing()
+    self.Placing = false
+    self.PlacementMaid:DoCleaning()
+end
 
 function PlacementModule:Init()
     self.SelectedPlacement = nil
@@ -98,8 +143,11 @@ function PlacementModule:Init()
     self.Deleting = false
     Debounce = false
     self.CurrentRot = 0
-    self.Maid = self.Shared.Maid.new()
+    self.PlacementMaid = self.Shared.Maid.new()
+    self.DeleteMaid = self.Shared.Maid.new()
     self.Input = self.Controllers.UserInput
+    self.Keyboard = self.Controllers.UserInput:Get("Keyboard")
+    self.Mouse = self.Controllers.UserInput:Get("Mouse")
 end
 
 
