@@ -26,21 +26,20 @@ function PlacementService:Start()
             checkpart.Size = Vector3.new(0.2, 0.2, 0.2)
         end
 
-        local Debounce = false
-
         local CanPlace = false
         local Plot
 
-        checkpart.Touched:Connect(function(hit)
-            if hit.Name == "Hitbox" then
-                print("asdsadsad")
-                if hit.Parent.Info.Owner.Value == Player then
-                    Plot = hit.Parent
-                    CanPlace = true
-                end
+        self.Maid:GiveTask(checkpart.Touched:Connect(function() end))
+
+        for i,v in pairs(checkpart:GetTouchingParts()) do
+            if v.Name == "Hitbox" then
+                CanPlace = true
+                Plot = v.Parent
+                break
             end
-        end)
-        wait(0.2)
+            CanPlace = false
+        end
+
         if CanPlace then
             local Placement = Items:FindFirstChild(ItemName):Clone()
             Placement.Parent = Plot:WaitForChild("Placements")
@@ -49,13 +48,14 @@ function PlacementService:Start()
         else
             print("Can't place!")
         end
-
+        self.Maid:DoCleaning()
     end)
 end
 
 
 function PlacementService:Init()
-	self:RegisterClientEvent("PlaceObject")
+    self:RegisterClientEvent("PlaceObject")
+    self.Maid = self.Shared.Maid.new()
 end
 
 

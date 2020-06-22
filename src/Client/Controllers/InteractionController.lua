@@ -35,7 +35,7 @@ end
 
 function InteractionController:Start()
     wait(5)
-    self.Modules.PlacementModule:StartPlacing("Chair")
+    self.Modules.PlacementModule:StartPlacing("Sofa")
     wait(10)
     --self.Modules.PlacementModule:StopPlacing()
     RunService.Heartbeat:Connect(function()
