@@ -90,7 +90,7 @@ function InteractionController:Start()
 
     wait(5)
     self.Modules.PlacementModule:StartPlacing("Door")
-    wait(10)
+    wait(20)
     self.Modules.PlacementModule:StopPlacing()
     wait(20)
     self.Modules.PlacementModule:ActivateDeleteMode()

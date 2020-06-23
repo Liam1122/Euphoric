@@ -11,6 +11,7 @@ local Items = ReplicatedStorage:WaitForChild("Placements")
 
 function PlacementService:Start()
     self:ConnectClientEvent("PlaceObject", function(Player, ItemName, CFrame)
+        if CFrame == nil then return end
         --print(Player.Name .. ", wants to place something!")
         local checkpart = Instance.new("Part")
         checkpart.Name = "CheckPart"
@@ -44,17 +45,29 @@ function PlacementService:Start()
             local Placement = Items:FindFirstChild(ItemName):Clone()
             Placement.Parent = Plot:WaitForChild("Placements")
             Placement:SetPrimaryPartCFrame(CFrame)
+            local NewData, PlotType = self.PlotManager:RegisterItem(Player, Placement)
+            print(PlotType)
+            --self.Services.DataService:UpdatePlot(NewData, PlotType)
             print("Can place!")
         else
             print("Can't place!")
         end
         self.Maid:DoCleaning()
     end)
+
+    self:ConnectClientEvent("DestroyObject", function(Player, Object)
+        if Object == nil then return end
+        print(Player.Name .. ", wants to destroy " .. Object.Name)
+        if not Object.Parent.Name == "Placements" and Object:IsDescendantOf(workspace.Properties) then return end
+        Object:Destroy()
+    end)
 end
 
 
 function PlacementService:Init()
     self:RegisterClientEvent("PlaceObject")
+    self:RegisterClientEvent("DestroyObject")
+    self.PlotManager = self.Modules.PlotManager
     self.Maid = self.Shared.Maid.new()
 end
 

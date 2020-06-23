@@ -73,7 +73,7 @@ function PlacementModule:StartPlacing(PlacementItemName)
     end))
 
    self.PlacementMaid:GiveTask(self.Mouse.LeftDown:Connect(function()
-        if self.CurrentPlacementCFrame == nil then return end
+        if self.SelectedPlacement == nil then return end
         if Debounce then return end
         Debounce = true
         print("Place at: " .. tostring(self.CurrentPlacementCFrame))
@@ -125,8 +125,9 @@ function PlacementModule:ActivateDeleteMode()
     end))
 
     self.DeleteMaid:GiveTask(self.Mouse.LeftDown:Connect(function()
-        if SelectionBox == nil then return end
+        if SelectionBox == nil or SelectionBox.Adornee == nil then return end
         --Client side test
+        self.Services.PlacementService.DestroyObject:Fire(SelectionBox.Adornee)
         SelectionBox.Adornee:Destroy()
     end))
 end
