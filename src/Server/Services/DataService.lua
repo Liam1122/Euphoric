@@ -51,11 +51,12 @@ function DataService:Start()
                         end
                     end  
                     local ItemToPlace = game.ReplicatedStorage.Placements:FindFirstChild(ItemName):Clone()
-                    ItemToPlace.Parent = workspace
+                    ItemToPlace.Parent = workspace.Properties.Store2
                     ItemToPlace:SetPrimaryPartCFrame(self.Shared.CFrameSerializer:DecodeCFrame(v.C))
                 end
             end
         end
+        --End of test
 
         while wait(60) do
             self:ModifyPlaytime(Player, 1)
@@ -72,7 +73,7 @@ function DataService:GetData(Player, DataType)
     if typeof(SearchResult) == "table" then
         self.TableUtil.Print(SearchResult, string.format("%s's %s Data", Player.Name, DataType), true)
     end
-    return QueriedDataStore, SearchResult -- Returns the Store, and the data.
+    return QueriedDataStore, SearchResult -- Returns the Store, and the data. )(Store so we can up on the fly)
 end
 
 function DataService:ModifyCash(Player, Amount)
@@ -92,13 +93,13 @@ function DataService:GetPlotData(Player)
 end
 
 function DataService:UpdatePlot(NewData, PlotType)
-    self.TableUtil.Print(NewData, string.format("[%s] Plot Data", PlotType), true)
+    self.TableUtil.Print(NewData, string.format("[%s] Plot New Data", PlotType), true)
 end
 
 function DataService:Init()
     self.DataStore2 = self.Modules.DataStore2
     self.TableUtil = self.Shared.TableUtil
-    self.MainKey = "Testy1"
+    self.MainKey = "Testing123"
     self:RegisterClientEvent("UpdateData")
 end
 

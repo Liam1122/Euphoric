@@ -47,7 +47,6 @@ function PlacementService:Start()
             Placement:SetPrimaryPartCFrame(CFrame)
             local NewData, PlotType = self.PlotManager:RegisterItem(Player, Placement)
             print(PlotType)
-            --self.Services.DataService:UpdatePlot(NewData, PlotType)
             print("Can place!")
         else
             print("Can't place!")

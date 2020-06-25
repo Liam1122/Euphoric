@@ -18,7 +18,7 @@ function SetCFrame(InteractionObject, Result)
     InteractionObject.Main.CFrame = InteractionObject.Main.CFrame * CFrame.new(0, math.rad(Result == "Open" and 2.6 or -2.6), 0)
 end
 
-function Window:HandleTween(...)
+function Window:InteractWith(...)
     local args = {...}
     print(args[3])
     if args[3] then

@@ -6,10 +6,7 @@
 
 local InteractionService = {Client = {}}
 
-local InteractionModules = {
-    Door = nil;
-    Window = nil;
-}
+local InteractionModules;
 
 local ItemInfo;
 
@@ -19,7 +16,7 @@ function InteractionService.Client:Interact(Player, InteractionObject)
     local Info = InteractionObject.Info
     if Info.Debounce.Value then return end
     local ItemType = ItemInfo[InteractionObject.Name].ItemType
-    if Info.Locked.Value then
+    if Info:FindFirstChild("Locked") and Info.Locked.Value then
         print("Interactable is locked")
         return nil
     end
@@ -48,8 +45,7 @@ end
 function InteractionService:Init()
     self:RegisterClientEvent("InteractionReplication")
     ItemInfo = self.Shared.ItemInfo
-    InteractionModules.Door = self.Modules.Door
-    InteractionModules.Window = self.Modules.Window
+    InteractionModules = self.Modules.InteractionModules
 end
 
 

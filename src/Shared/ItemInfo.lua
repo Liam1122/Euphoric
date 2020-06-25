@@ -5,6 +5,13 @@
 
 
 return {
+    ["Claim Plot"] = {
+        Id = -3,
+        ItemType = "ClaimPlot",
+        Interactions = {
+            "E",
+        }
+    },
     ["GameDoor"] = {
         Id = -2,
         ItemType = "Door",

@@ -20,8 +20,7 @@ local MainUI
 local InteractUI
 
 
-local Door;
-local Window;
+local InteractionModules;
 
 
 
@@ -65,11 +64,7 @@ function InteractionController:Start()
         if KeyCode == Enum.KeyCode.E then
             local Result = self.Services.InteractionService:Interact(InteractionObject)
             if Result == nil then return end -- Because the server noticed the door is on cooldown or they dont have access, so we won't do anything.
-            if self.ItemInfo[InteractionObject.Name].ItemType == "Door" then
-                Door:HandleTween(InteractionObject, Result, true)
-            elseif self.ItemInfo[InteractionObject.Name].ItemType == "Window" then
-                Window:HandleTween(InteractionObject, Result, true)
-            end
+            InteractionModules[self.ItemInfo[InteractionObject.Name].ItemType]:InteractWith(InteractionObject, Result, true)
         elseif KeyCode == Enum.KeyCode.F then
             if not InteractUI.Main.F.Visible then return end
             self.Services.InteractionService:LockUnlock(InteractionObject)
@@ -81,19 +76,17 @@ function InteractionController:Start()
         local IsNearby = (InteractionObject.Interact.Position - HumRoot.Position).magnitude < 120 and true or false
         print(IsNearby)
         local Info = self.ItemInfo[InteractionObject.Name]
-        if Info.ItemType == "Door" then
-            Door:HandleTween(InteractionObject, OpenClose, IsNearby)
-        elseif Info.ItemType == "Window" then
-            Window:HandleTween(InteractionObject, OpenClose, IsNearby)
-        end 
+        InteractionModules[Info.ItemType]:InteractWith(InteractionObject, OpenClose, IsNearby)
    end)
 
     wait(5)
     self.Modules.PlacementModule:StartPlacing("Door")
-    wait(20)
+    wait(10)
     self.Modules.PlacementModule:StopPlacing()
-    wait(20)
+    wait(10)
     self.Modules.PlacementModule:ActivateDeleteMode()
+    wait(10)
+    self.Modules.PlacementModule:DeactivateDeleteMode()
 end
 
 
@@ -102,8 +95,9 @@ function InteractionController:Init()
     self.Input = self.Controllers.UserInput
     MainUI = Player:WaitForChild("PlayerGui"):WaitForChild("MainUI")
     InteractUI = MainUI:WaitForChild("Interact")
-    Door = self.Modules.Door
-    Window = self.Modules.Window
+
+    print(self.Modules.InteractionModules.Door)
+    InteractionModules = self.Modules.InteractionModules;
      
 end
 

@@ -132,6 +132,12 @@ function PlacementModule:ActivateDeleteMode()
     end))
 end
 
+function PlacementModule:DeactivateDeleteMode()
+    self.Placing = false
+    self.Deleting = false
+    self.DeleteMaid:DoCleaning()
+end
+
 function PlacementModule:StopPlacing()
     self.Placing = false
     self.PlacementMaid:DoCleaning()

@@ -21,7 +21,7 @@ function SetCFrame(InteractionObject, Result)
     InteractionObject.Hinge.CFrame = InteractionObject.Hinge.CFrame * CFrame.Angles(0, math.rad(Result == "Open" and 90 or -90), 0)
 end
 
-function Door:HandleTween(...)
+function Door:InteractWith(...)
     local args = {...}
     print(args[3])
     if args[3] then
